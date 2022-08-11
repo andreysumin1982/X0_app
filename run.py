@@ -1,6 +1,6 @@
 #
-
+from server import server
 
 #
 if __name__ == '__main__':
-    pass
+    server.listen('0.0.0.0', 65000)
