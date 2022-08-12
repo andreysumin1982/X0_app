@@ -18,25 +18,28 @@ def listen(host: str, port: int):
     flag = True
     while flag:
         msg, addr = s.recvfrom(udp_max_size)
-        # Добавляем клиентов
+        # Добавляем клиентов в список
         if addr not in clients:
             clients.append(addr)
 
-        if not msg:
-            continue
-
-        # Уведомляем клиентов о подключении
+        # Уведомление о подключении клиентов
         client_ip = addr[0]
         client_port = addr[1]
         if msg.decode('utf-8') == '__join':
             print(f" [+] -> Клиент {client_ip}:{client_port} присоединился..")
             continue
 
-        msg = f"Клиент {client_ip}:{client_port} - {msg.decode('utf-8')}"
+        if not msg: # Если пустое сообщение
+            continue
+
+        msg = f"Клиент {client_ip} прислал сообщение:\n-> {msg.decode('utf-8')}"
+
         for client in clients:
-            if client == addr:
+            if client == addr: # Не отправлять данные клиенту, который их прислал
                 continue
+            # Отправляем сообщение
             s.sendto(msg.encode('utf-8'), client)
+
 #
 if __name__ == '__main__':
     pass
