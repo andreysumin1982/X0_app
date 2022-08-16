@@ -1,5 +1,9 @@
 #
 import socket
+from board_X0_net import theBoard
+from board_X0_net import printBoard
+import json
+import pickle
 #
 udp_max_size = 1024 # Максимальный размер UDP-пакета
 #
@@ -59,11 +63,23 @@ def listen(host: str, port: int):
         print(f" [+] -> Клиент {address[0]}:{address[1]} присоединился")
     while True:
         # Получаем запрос и декодируем в читаемый вид
-        data = client_socket.recv(1024).decode('utf-8')
+        data = client_socket.recv(4096).decode('utf-8')
+        if not data: # Если не сообщение, выходим из цыкла
+            break
         print(f"Client -> {data}")
-        # Отправляем клиенту сообщение и кодируем его для отправки
-        msg = input('SRV: ').encode('utf-8')
-        client_socket.send(msg)
+        # Вносим изменения в игру от клиента
+
+        print(printBoard())
+        # Вносим изиенения в игру от сервера
+        msg = input('SRV: ')
+
+        # Отправляем клиенту словарь и кодируем его для отправки
+        board = theBoard
+        client_socket.send(pickle.dumps(board))
+    # Закрываем соединение
+    client_socket.close()
+    print(f"[INFO] -> Клиент {address[0]}:{address[1]} отсоединился")
+
 
 #
 if __name__ == '__main__':

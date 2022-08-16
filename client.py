@@ -1,8 +1,8 @@
 #
-import requests
 import socket
 import threading
 import os
+import pickle
 
 #
 udp_max_size = 1024 # Максимальный размер UDP-пакета
@@ -78,6 +78,13 @@ udp_max_size = 1024 # Максимальный размер UDP-пакета
 #
 #     c.send(msg.encode())
 
+def printBoard(theBoard):
+    print(theBoard['top_l'] + '|' + theBoard['top_m'] + '|' + theBoard['top_r'])
+    print('-+-+-')
+    print(theBoard['mid_l'] + '|' + theBoard['mid_m'] + '|' + theBoard['mid_r'])
+    print('-+-+-')
+    print(theBoard['low_l'] + '|' + theBoard['low_m'] + '|' + theBoard['low_r'])
+
 def connect(server: str, port: int):
     # создаем socket: (ipv4, tcp)
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -86,12 +93,10 @@ def connect(server: str, port: int):
     while True:
         # Отправляем сообщение
         client.send(input('Client: ').encode('utf-8'))
-        # Получаем сообщение
-        msg = client.recv(1024).decode('utf-8')
-        print(f"SRV -> {msg}")
-
-
-
+        # Получаем сообщение (словарь)
+        msg = client.recv(4096)
+        data = pickle.loads(msg)
+        print(f"SRV -> {printBoard(data)}")
 
 #
 if __name__ == '__main__':
