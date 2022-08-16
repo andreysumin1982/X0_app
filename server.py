@@ -1,55 +1,13 @@
 #
 import socket
-from board_X0_net import theBoard
-from board_X0_net import printBoard
-import json
 import pickle
-#
-udp_max_size = 1024 # Максимальный размер UDP-пакета
-#
-# def listen(host: str, port: int):
-#     ''' Ф-ция слушает порт и принимат на вход ip-адрес, порт'''
-#
-#     # создаем socket: (ipv4, udp)
-#     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-#
-#     # Привязываю socket к  адресу ()
-#     s.bind((host, port))
-#     print(f"[OK] -> Start server..\nListening at {host}:{port}\n")
-#
-#     # Слушаем порт и клиентов
-#     clients = []
-#     while True:
-#         msg, addr = s.recvfrom(udp_max_size)
-#         #print(msg, addr)
-#
-#         # Уведомление о подключении клиентов
-#         if msg.decode() == '__join':
-#             print(f" [+] -> Клиент {addr[0]}:{addr[1]} присоединился")
-#
-#             # Добавляем клиентов в список
-#             if addr not in clients:
-#                 clients.append(addr)
-#             print(addr)
-#             print(clients)
-#             continue
-#
-#         if not msg: # Если пустое сообщение
-#             continue
-#         #s.sendto(printBoard().encode(), addr)
-#
-#         msg = f"Клиент {addr[0]} прислал сообщение:\n-> {msg.decode()}"
-#
-#         #b = printBoard().decode()
-#         for client in clients:
-#             #print(client)
-#             if client == addr: # Не отправлять данные клиенту, который их прислал
-#                 continue
-#             # Отправляем сообщение
-#             s.sendto(msg.encode(), client)
+import os
+from board_X0_net import run_X0, printBoard, theBoard, check
 
+#
 def listen(host: str, port: int):
     #создаем socket: (ipv4, tcp)
+    global server
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     # Привязка
     server.bind((host, port))
@@ -57,6 +15,7 @@ def listen(host: str, port: int):
     server.listen()
     print(f"[OK] -> Start server..\nListening at {host}:{port}\n")
     # Принимаем отправл. запросы от клиентов
+    global client_socket
     client_socket, address = server.accept()
     # Уведомление о подключении клиентов
     if address:
@@ -68,13 +27,17 @@ def listen(host: str, port: int):
             break
         print(f"Client -> {data}")
         # Вносим изменения в игру от клиента
-
-        print(printBoard())
+        run_X0(data, 'O')
+        c = check(data, 'O')
+        print('check = ', c)
+        printBoard()
         # Вносим изиенения в игру от сервера
         msg = input('SRV: ')
-
+        run_X0(msg, 'X')
         # Отправляем клиенту словарь и кодируем его для отправки
+        # Словарь(игровое поле)
         board = theBoard
+        #client_socket.send(pickle.dumps('test'))
         client_socket.send(pickle.dumps(board))
     # Закрываем соединение
     client_socket.close()
@@ -83,4 +46,5 @@ def listen(host: str, port: int):
 
 #
 if __name__ == '__main__':
+    os.system('clear')
     listen('0.0.0.0', 2022)

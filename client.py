@@ -79,11 +79,11 @@ udp_max_size = 1024 # Максимальный размер UDP-пакета
 #     c.send(msg.encode())
 
 def printBoard(theBoard):
-    print(theBoard['top_l'] + '|' + theBoard['top_m'] + '|' + theBoard['top_r'])
+    print(theBoard['1'] + '|' + theBoard['2'] + '|' + theBoard['3'])
     print('-+-+-')
-    print(theBoard['mid_l'] + '|' + theBoard['mid_m'] + '|' + theBoard['mid_r'])
+    print(theBoard['4'] + '|' + theBoard['5'] + '|' + theBoard['6'])
     print('-+-+-')
-    print(theBoard['low_l'] + '|' + theBoard['low_m'] + '|' + theBoard['low_r'])
+    print(theBoard['7'] + '|' + theBoard['8'] + '|' + theBoard['9'])
 
 def connect(server: str, port: int):
     # создаем socket: (ipv4, tcp)
@@ -96,7 +96,10 @@ def connect(server: str, port: int):
         # Получаем сообщение (словарь)
         msg = client.recv(4096)
         data = pickle.loads(msg)
-        print(f"SRV -> {printBoard(data)}")
+        if type(data) == dict: # Проверяем пришедшие данные
+            print(f"SRV -> {printBoard(data)}")
+        else:
+            print(f"SRV -> {data}")
 
 #
 if __name__ == '__main__':
