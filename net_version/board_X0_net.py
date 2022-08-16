@@ -21,43 +21,38 @@ def win(who):
 def check(turn, who):
     # Проверяем по горизонтали
     if (turn in theBoard['1']) and (turn in theBoard['2']) and (turn in theBoard['3']):
-        return True, win(who)
+        return True #win(who)
     elif (turn in theBoard['4']) and (turn in theBoard['5']) and (turn in theBoard['6']):
-        return True,win(who)
+        return True #win(who)
     elif (turn in theBoard['7']) and (turn in theBoard['8']) and (turn in theBoard['9']):
-        return True,win(who)
+        return True #win(who)
     # Проверяем по вертикали
     elif (turn in theBoard['1']) and (turn in theBoard['4']) and (turn in theBoard['7']):
-        return True,win(who)
+        return True #win(who)
     elif (turn in theBoard['2']) and (turn in theBoard['5']) and (turn in theBoard['8']):
-        win(who)
+        return True #win(who)
     elif (turn in theBoard['3']) and (turn in theBoard['6']) and (turn in theBoard['9']):
-        return True,win(who)
+        return True #win(who)
     # Проверяем по диагонали
     elif (turn in theBoard['1']) and (turn in theBoard['5']) and (turn in theBoard['9']):
-        return True,win(who)
+        return True #win(who)
     elif (turn in theBoard['3']) and (turn in theBoard['5']) and (turn in theBoard['7']):
-        return True,win(who)
+        return True #win(who)
     else: return False
 
-#---
-def run_X0(move, who):
+#
+def check_draw():
+    x, o, count = 'X', 'O', 0
+    for value in theBoard.values():
+        if (x in value) or (o in value):
+            count+=1
+    return count
 
-    #   Проверка на доступность клетки
-    # if ('X' in theBoard[move]) or ('O' in theBoard[move]):
-    #     print(f"[!] -> Клетка занята")
-    #     return f"[!] -> Клетка занята"
-
-        #
+#
+def additem(move, who):
     theBoard[move] = who
 
-
-
-    #printBoard()
-    #print(f"[DRAW] -> Ничья")
-
-#---
+#
 if __name__ == '__main__':
     pass
-    # printBoard()
-    # run_X0()
+    print(check('O'))
